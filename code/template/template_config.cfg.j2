@@ -1,0 +1,72 @@
+system = system
+initially = "tau==0
+    {%- if sys.global_time -%}
+        & t == 0
+    {%- endif -%}
+    {%- for i in range(1, sys.p+1) -%}
+        & y_sampled_{{i}}==0 & loc(Sample_y_{{i}})==done
+    {%- endfor -%}
+    {%- for i in range(1, sys.n_p+1) -%}
+        & x_p_{{i}}>={{sys.x_p_0_min[i-1]}} & x_p_{{i}}<={{sys.x_p_0_max[i-1]}}
+    {%- endfor -%}
+    {%- for i in range(1, sys.m+1) -%}
+        & u_{{i}}==0 & loc(Actuate_{{i}})==done
+    {%- endfor -%}
+    {%- for i in range(1, sys.n_d+1) -%}
+        & x_d_{{i}}==0
+    {%- endfor -%}
+    {%- if sys.use_urgent_semantics_and_pseudorandom_sequence -%}
+        {# initialisation for pseudorandom states:
+           The interval (0,1) is partitioned into disjoint sets, one for each pseudorandom state.
+           (If two random states are initialised the same, the timing of two channels will be exactly equal and pysim will complain about "Multiple active transitions".
+           This edge case is not desired for the simulations, but would appear very often if each pseudorandom state was initially within (0,1), because pysim also chooses the corner states.)
+        #}
+        {%- for i in range(1, sys.m+1) -%}
+            & Actuate_{{i}}.pseudorandom_state >= {{ (i - 1) * 0.499 / (sys.m + 1) }} & Actuate_{{i}}.pseudorandom_state <= {{ i * 0.499 / (sys.p + 1) }}
+        {%- endfor -%}
+        {%- for i in range(1, sys.p+1) -%}
+            & Sample_y_{{i}}.pseudorandom_state >= {{ 0.5 + (i - 1) * 0.499 / (sys.p + 1) }} & Sample_y_{{i}}.pseudorandom_state <= {{ 0.5 + i * 0.499 / (sys.p + 1) }}
+        {%- endfor -%}
+    {%- endif -%}
+    "
+forbidden = ""
+scenario = {{ sys.spaceex_scenario }}
+directions = {{ sys.spaceex_directions }}
+set-aggregation = "{{ sys.spaceex_set_aggregation }}"
+sampling-time = {{ sys.spaceex_sampling_time }}
+clustering = {{ sys.spaceex_clustering_percent }}
+flowpipe-tolerance = 1e-2
+flowpipe-tolerance-rel = 1e-3
+simu-init-sampling-points = 0
+time-horizon = {{sys.T*25}}
+iter-max = 
+    {%- if sys.global_time and sys.spaceex_iterations_for_global_time %}
+        {# special case: reachability over global time; differing number of iterations specified for this case #}
+        {{ sys.spaceex_iterations_for_global_time }}
+    {% else -%}
+        {# default case: number of iterations #}
+        {{ sys.spaceex_iterations }}
+    {% endif %}
+output-variables = "
+    {%- if sys.global_time -%}
+    t,
+    {%- endif -%}
+    tau
+    {%- for i in range(1, sys.n_p+1) -%}
+        , x_p_{{i}}
+    {%- endfor -%}
+    {%- for i in range(1, sys.m+1) -%}
+        , u_{{i}}
+    {%- endfor -%}
+    {%- for i in range(1, sys.p+1) -%}
+        , y_sampled_{{i}} 
+    {%- endfor -%}
+    {%- for i in range(1, sys.n_d+1) -%}
+        , x_d_{{i}}
+    {%- endfor -%}
+    "
+output-format = INTV
+verbosity = m
+output-error = 1e-4
+rel-err = 1.0E-12
+abs-err = 1.0E-15

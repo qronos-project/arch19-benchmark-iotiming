@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<sspaceex xmlns="http://www-verimag.imag.fr/xml-namespaces/sspaceex" version="0.2" math="SpaceEx">
+    {% for dim in set_of_io_dimensions %}
+    <component id="SH_matrix_multiply_{{dim}}x1">
+        <note> sample-and-hold out = k1*in1 + k2*in2 + ... . Outputs and inputs are scalar. </note>
+        {% if sys.use_urgent_semantics_and_pseudorandom_sequence %}
+            <!-- internal discrete-time-varying pseudo-random variable. Initial value can be interpreted as the seed of a random number generator. Must always be within [0,1]. -->
+            <param name="pseudorandom_state" type="real" local="true" d1="1" d2="1" dynamics="any" controlled="true" />
+        {% endif %}
+        <param name="t" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="false" />
+        <param name="out" type="real" local="false" d1="1" d2="1" dynamics="any" />
+        {% for i in range(1, dim+1) %}
+            <param name="in_{{i}}" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="false" />
+            <param name="k_{{i}}" type="real" local="false" d1="1" d2="1" dynamics="const" />
+        {% endfor %}
+        <param name="tmin" type="real" local="false" d1="1" d2="1" dynamics="const" />
+        <param name="tmax" type="real" local="false" d1="1" d2="1" dynamics="const" />
+        <param name="startOfCycle" type="label" local="false" />
+        <location id="1" name="wait" x="181.0" y="317.0" width="240.0" height="194.0">
+        <invariant>t &lt;= tmax</invariant>
+        <flow>out' == 0</flow>
+        </location>
+        <location id="2" name="done" x="1045.0" y="313.0" width="244.0" height="198.0">
+        <flow>out'==0</flow>
+        </location>
+        <transition source="2" target="1" bezier="true">
+        <label>startOfCycle</label>
+        <labelposition x="-62.0" y="22.0" width="114.0" height="54.0" />
+        <middlepoint x="594.0" y="482.5" />
+        {% if sys.use_urgent_semantics_and_pseudorandom_sequence %}
+            <!-- Update pseudorandom variable. Note that this is a very primitive pseudo-random number generator, which can even get stuck at a fixpoint. -->
+            <assignment>pseudorandom_state := 0.5 + 0.5 * cos(1234 * pseudorandom_state)</assignment>
+        {% endif %}
+        </transition>
+        <transition source="1" target="2">
+        {% if sys.use_urgent_semantics_and_pseudorandom_sequence %}
+            <!-- use determined timing point, which is set by the discrete-time-varying variable pseudorandom_state \in [0,1] -->
+            <!-- urgent semantics: in theory, it doesn't matter if we write the guard condition as t == const or t >= const; however, the latter is better for pysim -->
+            <guard>t &gt;= tmin + pseudorandom_state * (tmax - tmin)</guard>
+        {% else %}
+            <!-- nondeterministic transition (may happen at any time within the bounds) -->
+            <guard>tmin &lt;= t &amp;&amp; t &lt;= tmax</guard>
+        {% endif %}
+        <assignment>out := 
+            {%- for i in range(1, dim+1) -%}
+                in_{{i}} * k_{{i}}+
+            {%- endfor -%}
+            0
+        </assignment>
+        <labelposition x="-98.0" y="-43.0" width="202.0" height="70.0" />
+        </transition>
+    </component>
+    {% endfor %}
+  <component id="global_time">
+    <param name="t" type="real" local="false" d1="1" d2="1" dynamics="any" />
+    <location id="1" name="always" x="373.0" y="144.0" width="188.0" height="110.0">
+      <flow>t' == 1</flow>
+    </location>
+  </component>
+  <component id="plant">
+    {% for i in range(1, sys.n_p + 1) %}
+        <param name="x_p_{{i}}" type="real" local="false" d1="1" d2="1" dynamics="any" />
+    {% endfor %}
+    {% for i in range(1, sys.m + 1) %}
+        <param name="u_{{i}}" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="false" />
+    {% endfor %}
+    {% for i in range(1, sys.n_p + 1) %}
+        {% for j in range(1, sys.n_p + 1) %}
+            <param name="a_p_{{i}}_{{j}}" type="real" local="false" d1="1" d2="1" dynamics="const" />
+        {% endfor %}
+    {% endfor %}
+    {% for i in range(1, sys.n_p + 1) %}
+        {% for j in range(1, sys.m + 1) %}
+            <param name="b_p_{{i}}_{{j}}" type="real" local="false" d1="1" d2="1" dynamics="const" />
+        {% endfor %}
+    {% endfor %}
+    <location id="1" name="always" x="337.0" y="143.0" width="220.0" height="98.0"> 
+    <flow>
+    {% for i in range(1, sys.n_p + 1) -%}
+        x_p_{{i}}' ==
+        {%- for j in range(1, sys.n_p + 1) -%}
+            a_p_{{i}}_{{j}} * x_p_{{j}} +
+        {%- endfor -%}
+        {%- for j in range(1, sys.m + 1) -%}
+            b_p_{{i}}_{{j}} * u_{{j}} + 
+        {%- endfor -%}
+        0 
+        {%- if not loop.last -%}
+            &amp;&amp;
+        {% endif %}
+    {% endfor %}
+    </flow>
+    </location>
+  </component>
+  <component id="ctrl">
+    <param name="t" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="false" />
+    {% for i in range(1, sys.n_d + 1) %}
+        <param name="x_d_{{i}}" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
+    {% endfor %}
+    {% for i in range(1, sys.p + 1) %}
+        <param name="y_sampled_{{i}}" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
+    {% endfor %}
+    <param name="startOfCycle" type="label" local="false" />
+    {% for i in range(1, sys.n_d + 1) %}
+        {% for j in range(1, sys.n_d + 1) %}
+            <param name="a_d_{{i}}_{{j}}" type="real" local="false" d1="1" d2="1" dynamics="const" />
+        {% endfor %}
+    {% endfor %}
+    {% for i in range(1, sys.n_d+1) %}
+        {% for j in range(1, sys.p+1) %}
+            <param name="b_d_{{i}}_{{j}}" type="real" local="false" d1="1" d2="1" dynamics="const" />
+        {% endfor %}
+    {% endfor %}
+    <location id="1" name="tick" x="262.0" y="246.0" width="240.0" height="194.0">
+            <flow>
+                {%- for i in range(1, sys.n_d + 1) -%}
+                    x_d_{{i}}' == 0 
+                    {%- if not loop.last -%}
+                        &amp;&amp; 
+                    {%- endif -%}
+                {%- endfor -%}
+            </flow>
+    </location>
+    <transition source="1" target="1">
+      <label>startOfCycle</label>
+        <assignment>
+        {% for i in range(1, sys.n_d + 1) -%}
+            x_d_{{i}} :=
+            {%- for j in range(1, sys.p + 1) -%}
+                b_d_{{i}}_{{j}} * y_sampled_{{j}} +
+            {%- endfor -%}
+            {%- for j in range(1, sys.n_d + 1) -%}
+                a_d_{{i}}_{{j}} * x_d_{{j}} +
+            {%- endfor -%}
+            0 
+            {%- if not loop.last -%}
+                &amp;&amp;
+            {% endif %}
+        {% endfor -%}
+        </assignment>
+      <labelposition x="18.0" y="-31.0" width="186.0" height="62.0" />
+      <middlepoint x="144.0" y="7.0" />
+    </transition>
+  </component>
+  <component id="clkSawtooth">
+    <param name="tau" type="real" local="false" d1="1" d2="1" dynamics="any" />
+    <param name="startOfCycle" type="label" local="false" />
+    <param name="T" type="real" local="false" d1="1" d2="1" dynamics="const" />
+    <location id="1" name="always" x="481.0" y="166.0" width="188.0" height="110.0">
+      <invariant>-T/2 &lt;= tau &amp;&amp; tau &lt;= T/2</invariant>
+      <flow>tau' == 1</flow>
+    </location>
+    <transition source="1" target="1">
+      <label>startOfCycle</label>
+        {% if sys.use_urgent_semantics_and_pseudorandom_sequence %}
+            <!-- urgent semantics: in theory, it doesn't matter if we write the guard condition as t == const or t >= const; however, the latter is better for pysim -->
+            <guard>tau &gt;= T/2</guard>
+        {% else %}
+            <!-- nondeterministic transition -->
+            <guard>tau == T/2</guard>
+        {% endif %}
+      <assignment>tau := -T/2</assignment>
+      <labelposition x="-52.0" y="-60.0" width="144.0" height="50.0" />
+    </transition>
+  </component>
+  <component id="system">
+    <note>Assumptions
+- G_p==0: no disturbance.
+</note>
+    <param name="tau" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
+    {% if sys.global_time %}
+        <param name="t" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
+    {% endif %}
+    {% for i in range(1, sys.n_p+1) %}
+        <param name="x_p_{{i}}" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
+    {% endfor %}
+    {% for i in range(1, sys.p+1) %}
+        <param name="y_sampled_{{i}}" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
+    {% endfor %}
+    {% for i in range(1, sys.n_d+1) %}
+        <param name="x_d_{{i}}" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
+    {% endfor %}
+    {% for i in range(1, sys.m+1) %}
+        <param name="u_{{i}}" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
+    {% endfor %}
+    <param name="startOfCycle" type="label" local="false" />
+    {% for i in range(1, sys.p+1) %}
+        <bind component="SH_matrix_multiply_{{sys.n_p}}x1" as="Sample_y_{{i}}" x="300.0" y="{{ 400 * i }}">
+        <map key="t">tau</map>
+        <map key="out">y_sampled_{{i}}</map>
+        {% for j in range(1, sys.n_p+1) %}
+            <map key="in_{{j}}">x_p_{{j}}</map>
+            <map key="k_{{j}}">{{sys.C_p[i-1,j-1]}}</map>
+        {% endfor %}    
+        <map key="tmax">{{ sys.delta_t_y_max[i-1] }}</map>
+        <map key="tmin">{{ sys.delta_t_y_min[i-1] }}</map>
+        <map key="startOfCycle">startOfCycle</map>
+        </bind>
+    {% endfor %}
+    {% for i in range(1, sys.m+1) %}
+        <bind component="SH_matrix_multiply_{{sys.n_d}}x1" as="Actuate_{{i}}" x="600.0" y="{{400 * i }}">
+        <map key="t">tau</map>
+        <map key="out">u_{{i}}</map>
+        {% for j in range(1, sys.n_d+1) %}
+            <map key="in_{{j}}">x_d_{{j}}</map>
+            <map key="k_{{j}}">{{sys.C_d[i-1,j-1]}}</map>
+        {% endfor %}
+        <map key="tmax">{{ sys.delta_t_u_max[i-1] }}</map>
+        <map key="tmin">{{ sys.delta_t_u_min[i-1] }}</map>
+        <map key="startOfCycle">startOfCycle</map>
+        </bind>
+    {% endfor %}
+    <bind component="plant" as="plant_1" x="900.0" y="0.0">
+        {% for i in range(1, sys.n_p+1) %}
+            <map key="x_p_{{i}}">x_p_{{i}}</map>
+        {% endfor %}
+        {% for i in range(1, sys.m+1) %}
+            <map key="u_{{i}}">u_{{i}}</map>
+        {% endfor %}
+        {# Note that the indexing in numpy starts at A[0,0], whereas the variable naming chosen for SpaceEx starts at a_1_1. #}
+        {% for i in range(sys.n_p) %}
+            {% for j in range(sys.n_p) %}
+                <map key="a_p_{{i+1}}_{{j+1}}">{{ sys.A_p[i,j] }}</map>
+            {% endfor %}
+        {% endfor %}
+        {% for i in range(sys.n_p) %}
+            {% for j in range(sys.m) %}
+                <map key="b_p_{{i+1}}_{{j+1}}">{{ sys.B_p[i,j] }}</map>
+            {% endfor %}
+        {% endfor %}
+    </bind>
+    <bind component="ctrl" as="ctrl_1" x="1200.0" y="0.0">
+      <map key="t">tau</map>
+        {% for i in range(1, sys.p+1) %}
+            <map key="y_sampled_{{i}}">y_sampled_{{i}}</map>
+        {% endfor %}
+        {% for i in range(1, sys.n_d+1) %}
+            <map key="x_d_{{i}}">x_d_{{i}}</map>
+        {% endfor %}
+      <map key="startOfCycle">startOfCycle</map>
+        {% for i in range(sys.n_d) %}
+            {% for j in range(sys.n_d) %}
+                <map key="a_d_{{i+1}}_{{j+1}}">{{ sys.A_d[i,j] }}</map>
+            {% endfor %}
+        {% endfor %}
+        {% for i in range(sys.n_d) %}
+            {% for j in range(sys.p) %}
+                <map key="b_d_{{i+1}}_{{j+1}}">{{ sys.B_d[i,j] }}</map>
+            {% endfor %}
+        {% endfor %}
+    </bind>
+    <bind component="clkSawtooth" as="clkSawtooth_1" x="1500.0" y="0.0">
+      <map key="tau">tau</map>
+      <map key="startOfCycle">startOfCycle</map>
+      <map key="T">{{ sys.T }}</map>
+    </bind>
+    {% if sys.global_time %}
+        <bind component="global_time" as="global_time_1" x="1500.0" y="300.0">
+        <map key="t">t</map>
+        </bind>
+    {% endif %}
+  </component>
+</sspaceex>
+

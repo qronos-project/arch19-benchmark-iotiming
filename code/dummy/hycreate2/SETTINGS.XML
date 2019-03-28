@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="10.0.2" class="java.beans.XMLDecoder">
+ <object class="com.stanleybak.hycreate.containers.FrameData" id="FrameData0">
+  <void property="latestOpen">
+   <string>test2-converted-fixed.hyc2</string>
+  </void>
+  <void id="Point0" property="location">
+   <void class="java.awt.Point" method="getField">
+    <string>x</string>
+    <void method="set">
+     <object idref="Point0"/>
+     <int>607</int>
+    </void>
+   </void>
+   <void class="java.awt.Point" method="getField">
+    <string>y</string>
+    <void method="set">
+     <object idref="Point0"/>
+     <int>243</int>
+    </void>
+   </void>
+  </void>
+  <void property="options">
+   <void property="useSandbox">
+    <boolean>false</boolean>
+   </void>
+  </void>
+  <void property="recentFiles">
+   <void method="add">
+    <string>test2-converted-fixed.hyc2</string>
+   </void>
+   <void method="add">
+    <string>test1-converted-fixed.hyc2</string>
+   </void>
+  </void>
+  <void id="Dimension0" property="size">
+   <void class="java.awt.Dimension" method="getField">
+    <string>width</string>
+    <void method="set">
+     <object idref="Dimension0"/>
+     <int>765</int>
+    </void>
+   </void>
+   <void class="java.awt.Dimension" method="getField">
+    <string>height</string>
+    <void method="set">
+     <object idref="Dimension0"/>
+     <int>555</int>
+    </void>
+   </void>
+  </void>
+ </object>
+</java>

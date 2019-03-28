@@ -1,0 +1,5 @@
+This directory contains first experiments for the selection of possible tools:
+- Hand-crafted SpaceEx files for Example A1 (./a1.xml) (./a2.xml) and configurations (*.cfg)
+  For auto-generated files for the same examples, see ../template/output/solved_with_spaceex/stable/A1_1.spaceex.xml ../template/output/solved_with_spaceex/stable/A2_1.spaceex.xml
+- Script to run SpaceEx on A1+A2 and flowstar on A2 (./run_spaceex_and_flowstar.py) -> Output is in output_spaceex/, output_flowstar/
+- Manually produced results of HyCreate 2.81  (./hycreate2/)

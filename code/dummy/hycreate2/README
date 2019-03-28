@@ -1,0 +1,37 @@
+Tests with HyCreate
+
+Summarized result: If the SpaceEx model is analyzed with HyCreate 2.81 (after conversion with Hyst), the computed reachable set is incorrect, even contradicting HyCreate's own simulations.
+
+Due to multiple issues in Hyst and HyCreate this test is not run automatically.
+
+
+Use Hyst and HyCreate 2.81 in a Ubuntu 18.04 virtual machine. (Should also work with HyCreate 2.8).
+
+Open a terminal in the current directory.
+Hycreate must be launched with this working directory so that it uses the SETTINGS.XML file.
+(To work around problems on newer OpenJDK versions (>8), the "security sandbox" was disabled in the settings.)
+
+# Test1
+original spaceEx file (example A1)
+
+# Test1-converted
+test1 converted with hyst, fails with syntax error.
+
+# Test1-converted-fixed
+test1 converted with hyst and modified so that it runs:
+(This is due to bug https://github.com/verivital/hyst/issues/50 )
+Opened in Hycreate, manually fixed syntax errors (added missing $ in front of "Transition: Reset action" variable names), Model options: enabled "simulation and reachability", simulation settings: "Starting position: midpoint and corners, enumerate transitions: on"
+Save file
+Compile and Compute
+Move the results/ directory to test1-converted-fixed_result_hycreate
+Result: Computed reachable set is too small, only covers 0<=tau<=0.5, whereas -0.5<=tau<0 is completely missing.
+
+# Test2
+Test1, but guard changed from tau==0.5 to tau>=0.45
+
+# Test2-converted
+test2 converted with Hyst
+
+# Test2-converted-fixed
+test2 converted with Hyst, modified and processed as test1-converted-fixed.
+Result: Simulated set is larger than reachable set, there must be a problem!

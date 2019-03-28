@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="10.0.2" class="java.beans.XMLDecoder">
+ <object class="com.stanleybak.hycreate.containers.HyCreateData" id="HyCreateData0">
+  <void property="automatonName">
+   <string>test2</string>
+  </void>
+  <void property="dimensions">
+   <string>tau, ySample, yCont, uNext, uNow</string>
+  </void>
+  <void property="globalText">
+   <string>// Made using Hyst v1.5 from model file test2.xml
+// Command line arguments were: -t hycreate &quot;&quot; -i test2.xml -o test2-converted.hyc2</string>
+  </void>
+  <void property="initialStates">
+   <string>0.0 , 0.0 ; 0.0 , 0.0 ; -1.0 , 1.0 ; 0.0 , 0.0 ; 0.0 , 0.0 ; wait_wait_always_tick_always
+</string>
+  </void>
+  <void property="modes">
+   <void method="put">
+    <string>sample_sample_always_tick_always</string>
+    <object class="com.stanleybak.hycreate.containers.ModeData" id="ModeData0">
+     <void property="derivative">
+      <void method="add">
+       <string>return new Interval(1.0, 1.0);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval(0.0, 0.0);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval($yCont * 0.05 + $uNow * 0.5, $yCont * 0.05 + $uNow * 0.5);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval(0.0, 0.0);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval(0.0, 0.0);</string>
+      </void>
+     </void>
+     <void property="invariant">
+      <string>// invariant is: tau &lt;= 0.002 &amp; tau &lt;= 0.002 &amp; -0.5 &lt;= tau &amp; tau &lt;= 0.5
+
+return 1.0*$tau.min &lt;= 0.002 &amp;&amp; 1.0*$tau.min &lt;= 0.002 &amp;&amp; -1.0*$tau.max &lt;= 0.5 &amp;&amp; 1.0*$tau.min &lt;= 0.5;</string>
+     </void>
+     <void property="minMaxPoints">
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+     </void>
+     <void property="regridRatio">
+      <string>1.7, 1.7, 1.7, 1.7, 1.7</string>
+     </void>
+    </object>
+   </void>
+   <void method="put">
+    <string>sample_wait_always_tick_always</string>
+    <object class="com.stanleybak.hycreate.containers.ModeData" id="ModeData1">
+     <void property="derivative">
+      <void method="add">
+       <string>return new Interval(1.0, 1.0);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval(0.0, 0.0);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval($yCont * 0.05 + $uNow * 0.5, $yCont * 0.05 + $uNow * 0.5);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval(0.0, 0.0);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval(0.0, 0.0);</string>
+      </void>
+     </void>
+     <void property="invariant">
+      <string>// invariant is: tau &lt;= 0.002 &amp; -0.5 &lt;= tau &amp; tau &lt;= 0.5
+
+return 1.0*$tau.min &lt;= 0.002 &amp;&amp; -1.0*$tau.max &lt;= 0.5 &amp;&amp; 1.0*$tau.min &lt;= 0.5;</string>
+     </void>
+     <void property="minMaxPoints">
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+     </void>
+     <void property="regridRatio">
+      <string>1.7, 1.7, 1.7, 1.7, 1.7</string>
+     </void>
+    </object>
+   </void>
+   <void method="put">
+    <string>wait_sample_always_tick_always</string>
+    <object class="com.stanleybak.hycreate.containers.ModeData" id="ModeData2">
+     <void property="derivative">
+      <void method="add">
+       <string>return new Interval(1.0, 1.0);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval(0.0, 0.0);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval($yCont * 0.05 + $uNow * 0.5, $yCont * 0.05 + $uNow * 0.5);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval(0.0, 0.0);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval(0.0, 0.0);</string>
+      </void>
+     </void>
+     <void property="invariant">
+      <string>// invariant is: tau &lt;= 0.002 &amp; -0.5 &lt;= tau &amp; tau &lt;= 0.5
+
+return 1.0*$tau.min &lt;= 0.002 &amp;&amp; -1.0*$tau.max &lt;= 0.5 &amp;&amp; 1.0*$tau.min &lt;= 0.5;</string>
+     </void>
+     <void property="minMaxPoints">
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+     </void>
+     <void property="regridRatio">
+      <string>1.7, 1.7, 1.7, 1.7, 1.7</string>
+     </void>
+    </object>
+   </void>
+   <void method="put">
+    <string>wait_wait_always_tick_always</string>
+    <object class="com.stanleybak.hycreate.containers.ModeData" id="ModeData3">
+     <void property="derivative">
+      <void method="add">
+       <string>return new Interval(1.0, 1.0);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval(0.0, 0.0);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval($yCont * 0.05 + $uNow * 0.5, $yCont * 0.05 + $uNow * 0.5);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval(0.0, 0.0);</string>
+      </void>
+      <void method="add">
+       <string>return new Interval(0.0, 0.0);</string>
+      </void>
+     </void>
+     <void property="invariant">
+      <string>// invariant is: -0.5 &lt;= tau &amp; tau &lt;= 0.5
+
+return -1.0*$tau.max &lt;= 0.5 &amp;&amp; 1.0*$tau.min &lt;= 0.5;</string>
+     </void>
+     <void property="minMaxPoints">
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+      <void method="add">
+       <string>return null; // derivative has no min/max points in any box</string>
+      </void>
+     </void>
+     <void property="regridRatio">
+      <string>1.7, 1.7, 1.7, 1.7, 1.7</string>
+     </void>
+    </object>
+   </void>
+  </void>
+  <void id="ModelOptions0" property="options">
+   <void property="plotOptions">
+    <void property="plotYDimensionIndex">
+     <int>2</int>
+    </void>
+    <void property="visualizeDuringComputation">
+     <boolean>false</boolean>
+    </void>
+   </void>
+   <void property="reachabilityTime">
+    <string>42.0</string>
+   </void>
+   <void property="simulationOptions">
+    <void property="enumerateTransitions">
+     <boolean>true</boolean>
+    </void>
+    <void property="startingPositions">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>com.stanleybak.hycreate.containers.ModelSimulationOptions$StartingPositionsType</class>
+      <string>CORNERS_AND_MIDPOINTS</string>
+     </object>
+    </void>
+   </void>
+   <void property="timeStep">
+    <string>0.001</string>
+   </void>
+  </void>
+  <void property="selectedTransition">
+   <int>4</int>
+  </void>
+  <void property="transitions">
+   <void method="add">
+    <object class="com.stanleybak.hycreate.containers.TransitionData">
+     <void property="from">
+      <string>sample_sample_always_tick_always</string>
+     </void>
+     <void property="guard">
+      <string>// guard is: -0.1 &lt;= tau &amp; tau &lt;= 0.002
+
+return -1.0*$tau.max &lt;= 0.1 &amp;&amp; 1.0*$tau.min &lt;= 0.002;</string>
+     </void>
+     <void property="reset">
+      <string>$ySample.set($yCont.min, $yCont.max);</string>
+     </void>
+     <void property="to">
+      <string>wait_sample_always_tick_always</string>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="com.stanleybak.hycreate.containers.TransitionData">
+     <void property="from">
+      <string>sample_wait_always_tick_always</string>
+     </void>
+     <void property="guard">
+      <string>// guard is: -0.1 &lt;= tau &amp; tau &lt;= 0.002
+
+return -1.0*$tau.max &lt;= 0.1 &amp;&amp; 1.0*$tau.min &lt;= 0.002;</string>
+     </void>
+     <void property="reset">
+      <string>$ySample.set($yCont.min, $yCont.max);</string>
+     </void>
+     <void property="to">
+      <string>wait_wait_always_tick_always</string>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="com.stanleybak.hycreate.containers.TransitionData">
+     <void property="from">
+      <string>sample_sample_always_tick_always</string>
+     </void>
+     <void property="guard">
+      <string>// guard is: -0.001 &lt;= tau &amp; tau &lt;= 0.002
+
+return -1.0*$tau.max &lt;= 0.001 &amp;&amp; 1.0*$tau.min &lt;= 0.002;</string>
+     </void>
+     <void property="reset">
+      <string>$uNow.set($uNext.min, $uNext.max);</string>
+     </void>
+     <void property="to">
+      <string>sample_wait_always_tick_always</string>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="com.stanleybak.hycreate.containers.TransitionData">
+     <void property="from">
+      <string>wait_sample_always_tick_always</string>
+     </void>
+     <void property="guard">
+      <string>// guard is: -0.001 &lt;= tau &amp; tau &lt;= 0.002
+
+return -1.0*$tau.max &lt;= 0.001 &amp;&amp; 1.0*$tau.min &lt;= 0.002;</string>
+     </void>
+     <void property="reset">
+      <string>$uNow.set($uNext.min, $uNext.max);</string>
+     </void>
+     <void property="to">
+      <string>wait_wait_always_tick_always</string>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="com.stanleybak.hycreate.containers.TransitionData">
+     <void property="from">
+      <string>wait_wait_always_tick_always</string>
+     </void>
+     <void property="guard">
+      <string>// guard is: tau &gt;= 0.45
+
+return 1.0*$tau.max &gt;= 0.45;</string>
+     </void>
+     <void property="reset">
+      <string>
+// Original expression: -0.4 * $ySample + -0.01 * $uNext
+$uNext.set(Double.MAX_VALUE, -Double.MAX_VALUE);
+$uNext.expand(-0.4 * $ySample.min + -0.01 * $uNext.min);
+$uNext.expand(-0.4 * $ySample.max + -0.01 * $uNext.min);
+$uNext.expand(-0.4 * $ySample.min + -0.01 * $uNext.max);
+$uNext.expand(-0.4 * $ySample.max + -0.01 * $uNext.max);
+$tau.set(-0.5);
+</string>
+     </void>
+     <void property="to">
+      <string>sample_sample_always_tick_always</string>
+     </void>
+    </object>
+   </void>
+  </void>
+  <void property="versionString">
+   <string>File Version 3</string>
+  </void>
+ </object>
+</java>
